@@ -71,6 +71,31 @@ button{
     font-weight: 600;
 }
 
+.add-comment-btn{
+    margin:5px 0px;
+    cursor:pointer;
+    width:auto;
+    border-radius:5px;
+    font-size:15px;
+}
+
+.add-comment-section{
+    margin:0px;
+    padding:0px;
+    text-align:center;
+}
+
+.comment-input{
+    margin:15px 0px 5px 0px;
+    padding:5px;
+    width:200px;
+    height:50px;
+}
+
+.delete-btn{
+    color:darkcyan;
+}
+
 /* tweet */
 
 .tweet{
@@ -90,8 +115,10 @@ button{
     display: flex;
     font-size: 13px;
     justify-content: space-between;
-    width: 160px;
+    width: 180px;
 }
+
+
 
 .tweet-detail{
     display: flex;

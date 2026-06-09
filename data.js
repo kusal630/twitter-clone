@@ -56,3 +56,9 @@ export const tweetsData = [
         uuid: '8hy671sff-c0f5-4545-9c4b-1237gyys45',
     },     
 ]
+
+tweetsData.forEach(function(tweet){
+    localStorage.setItem(`likes-${tweet.uuid}`,tweet.likes,)
+    localStorage.setItem(`retweets-${tweet.uuid}`,tweet.retweets)
+    localStorage.setItem(`tweet-${tweet.tweetText}`,tweet.tweetText)
+})

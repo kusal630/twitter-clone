@@ -14,18 +14,28 @@ document.addEventListener('click', function(e){
     else if(e.target.id === 'tweet-btn'){
         handleTweetBtnClick()
     }
+    else if(e.target.id===`add-comment-btn-${e.target.dataset.uuid}`){
+
+        handleAddComment(e.target.dataset.uuid)
+    }
+    else if(e.target.id===`delete-btn-${e.target.dataset.uuid}`){
+        deleteTweet(e.target.dataset.uuid)
+    }
 })
  
 function handleLikeClick(tweetId){ 
     const targetTweetObj = tweetsData.filter(function(tweet){
         return tweet.uuid === tweetId
     })[0]
-
+    const previousLikes=Number(localStorage.getItem(`likes-${tweetId}`))
     if (targetTweetObj.isLiked){
         targetTweetObj.likes--
+        localStorage.setItem(`likes-${tweetId}`,previousLikes-1)
     }
     else{
         targetTweetObj.likes++ 
+        localStorage.setItem(`likes-${tweetId}`,previousLikes+1)
+
     }
     targetTweetObj.isLiked = !targetTweetObj.isLiked
     render()
@@ -35,12 +45,14 @@ function handleRetweetClick(tweetId){
     const targetTweetObj = tweetsData.filter(function(tweet){
         return tweet.uuid === tweetId
     })[0]
-    
+    const previousReTweets=Number(localStorage.getItem(`retweets-${tweetId}`))
     if(targetTweetObj.isRetweeted){
         targetTweetObj.retweets--
+        localStorage.setItem(`retweets-${tweetId}`,previousReTweets-1)
     }
     else{
         targetTweetObj.retweets++
+        localStorage.setItem(`retweets-${tweetId}`,previousReTweets+1)
     }
     targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted
     render() 
@@ -70,6 +82,35 @@ function handleTweetBtnClick(){
     }
 
 }
+
+function handleAddComment(parentTweetId,e){
+    const commentInput=document.getElementById(`comment-input-${parentTweetId}`)
+     if(commentInput.value){
+        tweetsData.forEach(function(tweet){
+                    if(tweet.uuid===parentTweetId){
+                        tweet.replies.push(
+                  {
+                handle: `@Scrimba`,
+                profilePic: `images/scrimbalogo.png`,
+                tweetText: `${commentInput.value}`,
+            }
+                        )
+                    }
+                    console.log(tweet.replies)
+            })
+        commentInput.value=''
+    }
+    render()
+}
+
+function deleteTweet(deleteUuid){
+    tweetsData.forEach(function(tweet){
+        if(tweet.uuid===deleteUuid){
+            document.getElementById(`deleteTweet-${deleteUuid}`).style.display='none'
+        }
+    })
+}
+
 
 function getFeedHtml(){
     let feedHtml = ``
@@ -108,7 +149,7 @@ function getFeedHtml(){
         
           
         feedHtml += `
-<div class="tweet">
+<div class="tweet" id='deleteTweet-${tweet.uuid}'>
     <div class="tweet-inner">
         <img src="${tweet.profilePic}" class="profile-pic">
         <div>
@@ -125,19 +166,28 @@ function getFeedHtml(){
                     <i class="fa-solid fa-heart ${likeIconClass}"
                     data-like="${tweet.uuid}"
                     ></i>
-                    ${tweet.likes}
+                    ${localStorage.getItem(`likes-${tweet.uuid}`)}
                 </span>
                 <span class="tweet-detail">
                     <i class="fa-solid fa-retweet ${retweetIconClass}"
                     data-retweet="${tweet.uuid}"
                     ></i>
-                    ${tweet.retweets}
+                    ${localStorage.getItem(`retweets-${tweet.uuid}`)}
+                </span>
+                <span class="tweet-detail">
+                    <i class="fa-solid fa-trash-can delete-btn" 
+                    id='delete-btn-${tweet.uuid}'
+                    data-uuid=${tweet.uuid}></i>
                 </span>
             </div>   
         </div>            
     </div>
     <div class="hidden" id="replies-${tweet.uuid}">
         ${repliesHtml}
+        <div class='add-comment-section'>
+            <textarea class='comment-input' id='comment-input-${tweet.uuid}' placeholder='Add comment!'></textarea>
+            <button class='add-comment-btn' id='add-comment-btn-${tweet.uuid}' data-uuid=${tweet.uuid}>Add comment</button>
+        </div>
     </div>   
 </div>
 `
@@ -150,4 +200,3 @@ function render(){
 }
 
 render()
-
